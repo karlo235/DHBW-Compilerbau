@@ -2,6 +2,7 @@
     #include <stdio.h>
     #include <stdlib.h>
     #include <string.h>
+    #include "symTab.h"
     extern int yyerror(char* err);
     extern int yylex(void);
     extern FILE *yyin;
@@ -29,6 +30,7 @@
 %%
 input: declarations formula SEMICOLON {
             printf("PAR: Formula completed with Semicolon.");
+            printSymbolTable();
           };
 
 declarations:
@@ -38,23 +40,38 @@ declarations:
 declaration:  
           DECLARE PREDICATE ID DD DIGIT {
             printf("PAR: Declaration: Predicate -%s- Arity: %d\n", $<val>3, $<number>5);
+					  addSymbolEntry($<val>3, Predicate, $<number>5);
           }
           | DECLARE FUNCTION ID DD DIGIT {
             printf("PAR: Declaration: Function -%s- Arity: %d\n", $<val>3, $<number>5);
+            addSymbolEntry($<val>3, Function, $<number>5);
           }
           | DECLARE VARIABLE ID DD INT {
             printf("PAR: Declaration: Variable -%s- Type: %s\n", $<val>3, $<val>5);
+            addSymbolEntry($<val>3, Variable, 0);
           }
           ;
 
 formula:  ALL OPENSQUARE ID CLOSESQUARE formula {
             printf("PAR: QUANTOR: ALL %s\n", $<val>3);
+            if(!checkSymbol($<val>3, Variable)) {
+              printf("PAR: ERROR: IS NOT A VARIABLE\n");
+              return 0;
+            }
           }
           | EXIST OPENSQUARE ID CLOSESQUARE formula {
             printf("PAR: QUANTOR: EXIST %s\n", $<val>3);
+            if(!(checkSymbol($<val>3, Function) || checkSymbol($<val>3, Variable))) {
+              printf("PAR: ERROR: IS NOT A VARIABLE OR A FUNCTION\n");
+              return 0;
+            }
           }
           | ID OPENPAR args CLOSEPAR {
             printf("PAR: ATOM: %s()\n", $<val>1);
+            if(!checkSymbol($<val>1, Predicate)) {
+              printf("PAR: ERROR: IS NOT A PREDICATE\n");
+              return 0;
+            }
           }
           | NOT formula {
             printf("PAR: JUNCTOR: NEGATION\n");
@@ -87,6 +104,10 @@ args:
 arg_list:
           | ID {
             printf("PAR: TERM: Variable/Constant %s\n", $<val>1);
+            if(!(checkSymbol($<val>1, Variable) || checkSymbol($<val>1, Function))) {
+              printf("PAR: ERROR: IS NOT A VARIABLE OR A FUNCTION\n");
+              return 0;
+            };
           }
           | DIGIT {
             printf("PAR: TERM: Variable/Constant %d\n", $<number>1);
