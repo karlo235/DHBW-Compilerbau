@@ -1,4 +1,4 @@
-objects = parser.o scanner.o symTab.o
+objects = parser.o scanner.o symTab.o synTree.o
 CC = gcc
 LEX = flex
 YACC = bison
@@ -18,3 +18,4 @@ scanner.c: scanner.l
 scanner.o : parser.h symTab.h
 parser.o : parser.h symTab.h
 symTab.o : symTab.h
+synTree.o : synTree.h symTab.h
