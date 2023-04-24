@@ -154,7 +154,7 @@ args:     {
           | ID OPENPAR args CLOSEPAR {
             if (checkSymbol($<val>1, Function)) {
                 tableEntry t = getSymbolEntry($<val>1);
-                struct node *node = makeFunctionNode(t, NULL);
+                struct node *node = makeFunctionNode(t, $<node>3);
                 $<node>$ = makeArgumentNode(node);
             } else {
                 printf("PAR: ERROR: %s IS NOT A FUNCTION\n", $<val>1);
