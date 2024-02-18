@@ -11,7 +11,7 @@ tableEntry actSymTable = NULL;
  * @param identifier Identifier
  * @param type Type
  * @param arity Arity
- * @return newly created table entry
+ * @return created table entry
  */
 tableEntry addSymbolEntry(char identifier[], type type, int arity) {
     // Check if the symbol is already in the table
@@ -28,7 +28,7 @@ tableEntry addSymbolEntry(char identifier[], type type, int arity) {
             printf("SYM: Initializing symbol table\n");
             actSymTable = new_tableEntry;
         }
-            // Append the entry to an existing table
+        // Append the entry to an existing table
         else {
             tableEntry temp = actSymTable;
             // Find the last entry
@@ -65,11 +65,11 @@ tableEntry getSymbolEntry(char identifier[]) {
 /**
  * @brief Function to check if a symbol table entry is of a given type
  * 
- * @param identifier
+ * @param identifier Identifier
+ * @param type symbol type to compare to
  * @return 0 if check unsuccessful or 1 if check successful
  */
 int checkSymbol(char identifier[], type type) {
-
     tableEntry temp = getSymbolEntry(identifier);
     if (temp->type == type)
         return 1;
@@ -79,6 +79,9 @@ int checkSymbol(char identifier[], type type) {
 
 /**
  * @brief Helper function for printing the symbol table, prints the given string repeatedly
+ *
+ * @param str string to print repeatedly
+ * @param iter number of times str should be printed
  */
 void printFor(char *str, int iter) {
     for (int i = 0; i < iter; ++i) {
@@ -88,6 +91,9 @@ void printFor(char *str, int iter) {
 
 /**
  * @brief Helper function for printing the symbol table, centers and prints the given string
+ *
+ * @param text text to print
+ * @param cellWidth width of the cell the text should fit in
  */
 void printText(const char *text, int cellWidth) {
     int rest = cellWidth - strlen(text);
@@ -97,7 +103,8 @@ void printText(const char *text, int cellWidth) {
     printFor(" ", whitespace);
     printf("%s", text);
 
-    if (rest % 2 == 1) { ++whitespace; }
+    if (rest % 2 == 1)
+        ++whitespace;
     printFor(" ", whitespace);
 }
 
@@ -148,6 +155,30 @@ void printSymbolTable() {
         printFor("-", lineWidth);
         printf("\n");
         index++;
+        temp = temp->next;
+    }
+    temp = NULL;
+}
+
+/**
+ * @brief Function to print declarations to the output file
+ * 
+ * @param f output file
+ */
+void printDeclarations(FILE *f) {
+    char const *types[] = {"PREDICATE", "FUNCTION", "VARIABLE"};
+    tableEntry temp = actSymTable;
+
+    while (temp != NULL) {
+        fprintf(f, "DECLARE ");
+        fprintf(f, "%s ", types[temp->type]);
+        fprintf(f, "%s ", temp->identifier);
+        fprintf(f, ": ");
+        if (types[temp->type] == "VARIABLE") {
+            fprintf(f, "int\n");
+        } else {
+            fprintf(f, "%d \n", temp->arity);
+        }
         temp = temp->next;
     }
     temp = NULL;

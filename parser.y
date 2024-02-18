@@ -4,9 +4,11 @@
     #include <string.h>
     #include "symTab.h"
     #include "synTree.h"
+    #include "optimizer.h"
     extern int yyerror(char *err);
     extern int yylex(void);
     extern FILE *yyin;
+    FILE *outputFile;
 %}
 
 %union {
@@ -34,6 +36,11 @@ input: declarations formula SEMICOLON {
             printf("PAR: Formula completed with Semicolon.");
             printSymbolTable();
             printTree($<node>2, 0);
+            $<node>2 = optimizeFormula($<node>2);
+            printDeclarations(outputFile);
+            fprintf(outputFile, "\n");
+            printFormula($<node>2, outputFile);
+            fprintf(outputFile, " ;\n");
           };
 
 declarations:
@@ -90,7 +97,9 @@ formula:  ALL OPENSQUARE ID CLOSESQUARE formula {
             printf("PAR: ATOM: %s()\n", $<val>1);
             if (checkSymbol($<val>1, Predicate)) {
               tableEntry t = getSymbolEntry($<val>1);
-              $<node>$ = makePredicateNode(t, $<node>3);
+              struct node *predicateNode = makePredicateNode(t, $<node>3);
+              checkArity(predicateNode, t->arity); 
+              $<node>$ = predicateNode;
             } else {
               printf("PAR: ERROR: %s IS NOT A PREDICATE\n", $<val>1);
               exit(1);
@@ -154,8 +163,9 @@ args:     {
           | ID OPENPAR args CLOSEPAR {
             if (checkSymbol($<val>1, Function)) {
                 tableEntry t = getSymbolEntry($<val>1);
-                struct node *node = makeFunctionNode(t, $<node>3);
-                $<node>$ = makeArgumentNode(node);
+                struct node *functionNode = makeFunctionNode(t, $<node>3);
+                checkArity(functionNode, t->arity);
+                $<node>$ = makeArgumentNode(functionNode);
             } else {
                 printf("PAR: ERROR: %s IS NOT A FUNCTION\n", $<val>1);
                 exit(1);
@@ -168,13 +178,17 @@ args:     {
 %%
 
 int yyerror(char *err) {
-  printf("Error: %s\n",err);
+    printf("Error: %s\n", err);
 }
 void main(int argc, char *argv[]) {
-  ++argv, --argc;
-  if ( argc > 0 )
-    yyin = fopen( argv[0], "r" );
-  else
-    yyin = stdin;
-  yyparse();
+    ++argv, --argc;
+    if (argc > 0)
+        yyin = fopen(argv[0], "r");
+    else
+        yyin = stdin;
+    if (argc > 1)
+        outputFile = fopen(argv[1], "w");
+    else
+        outputFile = fopen("output.pl1", "w");
+    yyparse();
 }

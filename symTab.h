@@ -11,7 +11,9 @@ typedef enum type type;
 
 // Datatype of a symbol table entry
 struct tableEntry_struct {
+    // Entry identifier
     char identifier[101];
+    // Entry type
     type type;
     // Number of arguments
     int arity;
@@ -28,5 +30,7 @@ tableEntry getSymbolEntry(char *identifier);
 int checkSymbol(char identifier[], type type);
 
 void printSymbolTable();
+
+void printDeclarations(FILE *f);
 
 #endif

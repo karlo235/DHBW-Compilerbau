@@ -22,7 +22,8 @@ enum nodeT {
 };
 
 struct node {
-    enum nodeT nodeType; // Assign Node type
+    // Assign node type
+    enum nodeT nodeType;
     union {
         struct quantor {
             struct node *var;
@@ -86,6 +87,18 @@ struct node *appendArgumentNode(struct node *argument_left, struct node *argumen
 
 struct node *makeNumberNode(int number);
 
+void checkArity(struct node *node, int expectedArity);
+
+int countArguments(struct node *argList);
+
 void printTree(struct node *node, int level);
+
+void printFormula(struct node *node, FILE *f);
+
+void printFormulaWithBracketsIfNeeded(struct node *node, FILE *f, int ignore_and);
+
+void freeTree(struct node *node);
+
+struct node *copyTree(struct node *node);
 
 #endif

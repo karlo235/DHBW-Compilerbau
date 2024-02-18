@@ -7,8 +7,8 @@
 /**
  * @brief Function to create a node of type ALL
  *
- * @param var
- * @param formula_node
+ * @param var variable of the all node
+ * @param formula_node formula of the all node
  * @return created struct node*
  */
 struct node *makeAllNode(struct node *var, struct node *formula_node) {
@@ -22,8 +22,8 @@ struct node *makeAllNode(struct node *var, struct node *formula_node) {
 /**
  * @brief Function to create a node of type EXIST
  *
- * @param var
- * @param formula_node
+ * @param var variable of the exist node 
+ * @param formula_node formula of the exist node
  * @return created struct node*
  */
 struct node *makeExistNode(struct node *var, struct node *formula_node) {
@@ -37,8 +37,8 @@ struct node *makeExistNode(struct node *var, struct node *formula_node) {
 /**
  * @brief Function to create a node of type AND
  *
- * @param formula_left_node
- * @param formula_right_node
+ * @param formula_left_node left node of and
+ * @param formula_right_node right node of and
  * @return created struct node*
  */
 struct node *makeConjunctionNode(struct node *formula_left_node, struct node *formula_right_node) {
@@ -52,8 +52,8 @@ struct node *makeConjunctionNode(struct node *formula_left_node, struct node *fo
 /**
  * @brief Function to create a node of type OR
  *
- * @param formula_left_node
- * @param formula_right_node
+ * @param formula_left_node left node of or
+ * @param formula_right_node right node of or
  * @return created struct node*
  */
 struct node *makeDisjunctionNode(struct node *formula_left_node, struct node *formula_right_node) {
@@ -67,8 +67,8 @@ struct node *makeDisjunctionNode(struct node *formula_left_node, struct node *fo
 /**
  * @brief Function to create a node of type IMPLICATION
  *
- * @param formula_left_node
- * @param formula_right_node
+ * @param formula_left_node left node of implication
+ * @param formula_right_node right node of implication
  * @return created struct node*
  */
 struct node *makeImplicationNode(struct node *formula_left_node, struct node *formula_right_node) {
@@ -82,8 +82,8 @@ struct node *makeImplicationNode(struct node *formula_left_node, struct node *fo
 /**
  * @brief Function to create a node of type EQUIVALENT
  *
- * @param formula_left_node
- * @param formula_right_node
+ * @param formula_left_node left node of equivalence
+ * @param formula_right_node right node of equivalence
  * @return created struct node*
  */
 struct node *makeEquivalenceNode(struct node *formula_left_node, struct node *formula_right_node) {
@@ -97,7 +97,7 @@ struct node *makeEquivalenceNode(struct node *formula_left_node, struct node *fo
 /**
  * @brief Function to create a node of type NOT
  *
- * @param formula
+ * @param formula negated formula
  * @return created struct node*
  */
 struct node *makeNegationNode(struct node *formula) {
@@ -110,8 +110,8 @@ struct node *makeNegationNode(struct node *formula) {
 /**
  * @brief Function to create a node of type FUNCTION
  *
- * @param SymTabEntry
- * @param argumentList
+ * @param SymTabEntry symbol table entry of the function
+ * @param argumentList arguments of the function
  * @return created struct node*
  */
 struct node *makeFunctionNode(tableEntry SymTabEntry, struct node *argumentList) {
@@ -125,8 +125,8 @@ struct node *makeFunctionNode(tableEntry SymTabEntry, struct node *argumentList)
 /**
  * @brief Function to create a node of type PREDICATE
  *
- * @param SymTabEntry
- * @param argumentList
+ * @param SymTabEntry symbol table entry of the predicate
+ * @param argumentList arguments of the predicate
  * @return created struct node*
  */
 struct node *makePredicateNode(tableEntry SymTabEntry, struct node *argumentList) {
@@ -140,8 +140,8 @@ struct node *makePredicateNode(tableEntry SymTabEntry, struct node *argumentList
 /**
  * @brief Function to create a node of type VARIABLE
  *
- * @param SymTabEntry
- * @return struct node*
+ * @param SymTabEntry symbol table entry of the variable
+ * @return created struct node*
  */
 struct node *makeVariableNode(tableEntry SymTabEntry) {
 
@@ -154,7 +154,7 @@ struct node *makeVariableNode(tableEntry SymTabEntry) {
 /**
  * @brief Function to create a node of type TRUE
  *
- * @return struct node*
+ * @return created struct node*
  */
 struct node *makeTrueNode() {
     struct node *new_node = malloc(sizeof(struct node));
@@ -165,7 +165,7 @@ struct node *makeTrueNode() {
 /**
  * @brief Function to create a node of type FALSE
  *
- * @return struct node*
+ * @return created struct node*
  */
 struct node *makeFalseNode() {
     struct node *new_node = malloc(sizeof(struct node));
@@ -176,7 +176,8 @@ struct node *makeFalseNode() {
 /**
  * @brief Function to create a node of type ARGUMENT
  *
- * @return struct node*
+ * @param arg argument of the node
+ * @return created struct node*
  */
 struct node *makeArgumentNode(struct node *arg) {
     struct node *new_node = malloc(sizeof(struct node));
@@ -189,9 +190,9 @@ struct node *makeArgumentNode(struct node *arg) {
 /**
  * @brief Function to append an argument node
  *
- * @param argument_left
- * @param argument_new
- * @return struct node*
+ * @param argument_left left argument of the node
+ * @param argument_new argument to set as next
+ * @return created struct node*
  */
 struct node *appendArgumentNode(struct node *argument_left, struct node *argument_new) {
     struct node *temp = argument_left;
@@ -206,7 +207,8 @@ struct node *appendArgumentNode(struct node *argument_left, struct node *argumen
 /**
  * @brief Function to create a node of type NUMBER
  *
- * @return struct node*
+ * @param number number value
+ * @return created struct node*
  */
 struct node *makeNumberNode(int number) {
     struct node *new_node = malloc(sizeof(struct node));
@@ -216,10 +218,39 @@ struct node *makeNumberNode(int number) {
 }
 
 /**
+ * @brief Function to check if arity of node is equal to expected arity
+ * 
+ * @param node syntax tree node to check arity of
+ * @param expectedArity expected arity of the node
+ */
+void checkArity(struct node *node, int expectedArity) {
+    int actualArity = countArguments(node->function_struct.argument);
+    if (actualArity != expectedArity) {
+        fprintf(stderr, "Error: Invalid arity. Expected %d but got %d\n", expectedArity, actualArity);
+        exit(1);
+    }
+}
+
+/**
+ * @brief Function to count the number of arguments of a syntax tree node
+ * 
+ * @param argList argument list of the syntax tree node
+ */
+int countArguments(struct node *argList) {
+    int count = 0;
+    struct node *current = argList;
+    while (current != NULL) {
+        count++;
+        current = current->argument_struct.next;
+    }
+    return count;
+}
+
+/**
  * @brief Function to print the syntax tree
  *
- * @param node
- * @param level
+ * @param node syntax tree node to print
+ * @param level level of the node
  */
 void printTree(struct node *node, int level) {
     if (node != NULL) {
@@ -295,4 +326,235 @@ void printTree(struct node *node, int level) {
                 exit(1);
         }
     }
+}
+
+/**
+ * @brief Function to print the formula with brackets if they are needed
+ * 
+ * @param node syntax tree node to print
+ * @param f output file
+ * @param ignore_and if = 0 brackets will be printed, if = 1 brackets will not be printed
+ */
+void printFormulaWithBracketsIfNeeded(struct node* node, FILE *f, int ignore_and) {
+    if ((node->nodeType == and && !ignore_and) ||
+        node->nodeType == or ||
+        node->nodeType == implication ||
+        node->nodeType == equivalence) {
+        fprintf(f, "(");
+        printFormula(node, f);
+        fprintf(f, ")");
+    } else {
+        printFormula(node, f);
+    }
+}
+
+
+/**
+ * @brief Function to print the formula to the output file
+ * 
+ * @param node syntax tree node to print
+ * @param f output file
+ */
+void printFormula(struct node *node, FILE *f) {
+    if (node != NULL) {
+        switch (node->nodeType) {
+            case all:
+                fprintf(f, "ALL[");
+                printFormula(node->quantor_struct.var, f);
+                fprintf(f, "]");
+                printFormulaWithBracketsIfNeeded(node->quantor_struct.formula, f, 0);
+                break;
+            case exist:
+                fprintf(f, "EXIST[");
+                printFormula(node->quantor_struct.var, f);
+                fprintf(f, "]");
+                printFormulaWithBracketsIfNeeded(node->quantor_struct.formula, f, 0);
+                break;
+            case and:
+                printFormulaWithBracketsIfNeeded(node->binary_struct.formula_left, f, 1);
+                fprintf(f, " & ");
+                printFormulaWithBracketsIfNeeded(node->binary_struct.formula_right, f, 1);
+                break;
+            case or:
+                printFormula(node->binary_struct.formula_left, f);
+                fprintf(f, " | ");
+                printFormula(node->binary_struct.formula_right, f);
+                break;
+            case implication:
+                printFormula(node->binary_struct.formula_left, f);
+                fprintf(f, " -> ");
+                printFormula(node->binary_struct.formula_right, f);
+                break;
+            case equivalence:
+                printFormula(node->binary_struct.formula_left, f);
+                fprintf(f, " <-> ");
+                printFormula(node->binary_struct.formula_right, f);
+                break;
+            case negation:
+                if (node->unary_junctor.formula->nodeType == predicate) {
+                    fprintf(f, "~");
+                    printFormula(node->unary_junctor.formula, f);
+                } else {
+                    fprintf(f, "~(");
+                    printFormula(node->unary_junctor.formula, f);
+                    fprintf(f, ")");
+                }
+                break;
+            case predicate:
+                fprintf(f, "%s(", node->predicate_struct.tableEntry->identifier);
+                printFormula(node->predicate_struct.argument, f);
+                fprintf(f, ")");
+                break;
+            case function:
+                if (node->function_struct.tableEntry->arity == 0) {
+                    fprintf(f, "%s", node->function_struct.tableEntry->identifier);
+                } else {
+                    fprintf(f, "%s(", node->function_struct.tableEntry->identifier);
+                    printFormula(node->function_struct.argument, f);
+                    fprintf(f, ")");
+                }
+                break;
+            case variable:
+                fprintf(f, "%s", node->variable_struct.tableEntry->identifier);
+                break;
+            case true_node:
+                fprintf(f, "TRUE");
+                break;
+            case false_node:
+                fprintf(f, "FALSE");
+                break;
+            case number_t:
+                fprintf(f, "%d", node->number);
+                break;
+            case argument_t:
+                printFormula(node->argument_struct.argument, f);
+                if (node->argument_struct.next != NULL) {
+                    fprintf(f, ",");
+                    printFormula(node->argument_struct.next, f);
+                }
+                break;
+            default:
+                printf("OUT: ERROR: Current nodeType = %d\n", node->nodeType);
+                fprintf(f, "ERROR: Current node = %d\n", node->nodeType);
+                exit(1);
+        }
+    }
+}
+
+/**
+ * @brief Function to delete a (sub)tree of the syntax tree
+ * 
+ * @param node syntax tree node to delete
+ */
+void freeTree(struct node* node) {
+	if (node != NULL) {
+		switch (node->nodeType) {
+			case all:
+			case exist:
+				freeTree(node->quantor_struct.formula);
+				free(node);
+				break;
+			case and:
+			case or:
+			case implication:
+			case equivalence:
+				freeTree(node->binary_struct.formula_left);
+				freeTree(node->binary_struct.formula_right);
+				free(node);
+				break;
+			case negation:
+				freeTree(node->unary_junctor.formula);
+				free(node);
+				break;
+			case predicate:
+				freeTree(node->predicate_struct.argument);
+				free(node);
+				break;
+			case function:
+				freeTree(node->function_struct.argument);
+				free(node);
+				break;
+			case variable:
+				free(node);
+				break;
+			case true_node:
+				free(node);
+				break;
+			case false_node:
+				free(node);
+				break;
+			case number_t:
+				free(node);
+				break;
+			case argument_t:
+				freeTree(node->argument_struct.argument);
+				freeTree(node->argument_struct.next);
+				free(node);
+				break;
+			default:
+				printf("SYN: ERROR: Couldn't free node - nodeType = %d", node->nodeType);
+				exit(1);
+		}
+	}
+}
+
+/**
+ * @brief Function to copy a (sub)tree of the syntax tree
+ * 
+ * @param node syntax tree node to print
+ */
+struct node *copyTree(struct node* node) {
+	struct node *copyNode = NULL;
+
+    if (node != NULL) {
+        switch (node->nodeType) {
+            case all:
+                copyNode = makeAllNode(copyTree(node->quantor_struct.var), copyTree(node->quantor_struct.formula));
+                break;
+            case exist:
+                copyNode = makeExistNode(copyTree(node->quantor_struct.var), copyTree(node->quantor_struct.formula));
+                break;
+            case and:
+                copyNode = makeConjunctionNode(copyTree(node->binary_struct.formula_left), copyTree(node->binary_struct.formula_right));
+                break;
+            case or:
+                copyNode = makeDisjunctionNode(copyTree(node->binary_struct.formula_left), copyTree(node->binary_struct.formula_right));
+                break;
+            case implication:
+                copyNode = makeImplicationNode(copyTree(node->binary_struct.formula_left), copyTree(node->binary_struct.formula_right));
+                break;
+            case equivalence:
+                copyNode = makeEquivalenceNode(copyTree(node->binary_struct.formula_left), copyTree(node->binary_struct.formula_right));
+                break;
+            case negation:
+                copyNode = makeNegationNode(copyTree(node->unary_junctor.formula));
+                break;
+            case predicate:
+                copyNode = makePredicateNode(node->predicate_struct.tableEntry, copyTree(node->predicate_struct.argument));
+                break;
+            case function:
+                copyNode = makeFunctionNode(node->function_struct.tableEntry, copyTree(node->function_struct.argument));
+                break;
+            case variable:
+                copyNode = makeVariableNode(node->function_struct.tableEntry);
+                break;
+            case true_node:
+                copyNode = makeTrueNode();
+                break;
+            case false_node:
+                copyNode = makeFalseNode();
+                break;
+            case number_t:
+                copyNode = makeNumberNode(node->number);
+                break;
+            case argument_t:
+                copyNode = makeArgumentNode(copyTree(node->argument_struct.argument));
+                copyNode->argument_struct.next = copyTree(node->argument_struct.next);
+                break;
+            default:
+                printf("SYN: ERROR: Couldn't copy node - nodeType = %d", node->nodeType);
+                exit(1);
+        }
+    }
+    return copyNode;
 }
